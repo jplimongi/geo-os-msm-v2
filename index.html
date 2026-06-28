@@ -729,16 +729,26 @@ competidores:()=>`
 <div class="sec-title"><span class="bar"></span>Competidores · ¿quién aparece antes y con qué fuentes?</div>
 <div class="hint" style="margin-bottom:12px">La pregunta no es solo si Mahou aparece, sino quién aparece primero y citado. El benchmark cuantitativo se construye en el diagnóstico (Fase 1).</div>
 <div class="card">
-  <h3>Citabilidad por competidor <span class="badge b-green">observación real · 25-jun</span></h3>
+  <h3>Citabilidad por competidor <span class="badge b-green">Ahrefs Brand Radar · abr–nov 2025</span></h3>
   <table><thead><tr><th>Compañía</th><th>Presencia en IA</th><th>Citación propia</th><th>Lectura</th></tr></thead><tbody>
-  ${[["Mahou San Miguel","Alta (la más mencionada)","Baja (≈0%)","Más mencionada, no más citada","tu"],
-     ["Estrella Galicia","Alta","Media-Alta","Preferida por Perplexity en el cara a cara",""],
-     ["Ámbar (regional)","Media","Alta (lidera en enlaces)","Lidera link presence pese a menos marca",""],
+  ${[["Mahou San Miguel","SoV menciones 53% Mahou · 40% SM · 23% Alhambra (AIO)","0% (citas propias)","Muy mencionada en IA · 0 citas propias","tu"],
+     ["Estrella Galicia","Supera a MSM en menciones (54.293 vs 51.416, AIO)","—","Gana el cara a cara en menciones",""],
+     ["Ámbar (regional)","Media","Lidera citas/enlaces del sector","Capta las citas pese a menos marca",""],
      ["Heineken / Cruzcampo","Alta","Baja","Mucha inversión, poca citabilidad",""],
      ["Damm","Media","Media","Presencia sólida en categoría",""]
     ].map(c=>`<tr${c[4]=='tu'?' style="background:#FCE8EA"':''}><td class="tprompt">${c[0]} ${c[4]=='tu'?'<span class="badge b-red">Tú</span>':''}</td><td>${c[1]}</td><td>${c[2]}</td><td class="mini">${c[3]}</td></tr>`).join("")}
   </tbody></table>
-  <div class="src">Valores cualitativos de la observación real. El benchmark cuantitativo (AI visibility / citation share por categoría) se construye en el diagnóstico.</div>
+  <div class="src">Fuente: <b>Ahrefs Brand Radar</b> · serie diaria abr–nov 2025. <b>Citación propia = 0</b> en los 4 dominios MSM y en todos los motores (AIO, ChatGPT, Perplexity, Copilot); las citas las captan terceros: Wikipedia, YouTube y ambar.com en cerveza; Bezoya y Font Vella en agua. SoV = cuota de menciones de marca en el set de keywords trackeadas.</div>
+</div>
+<div class="card" style="margin-top:16px">
+  <h3>Visibilidad por motor · SoV de menciones <span class="badge b-green">Ahrefs Brand Radar · abr–nov 2025</span></h3>
+  <table><thead><tr><th>Marca</th><th>AIO</th><th>ChatGPT</th><th>Perplexity</th><th>Copilot</th><th>Citas propias</th></tr></thead><tbody>
+   <tr><td class="tprompt">Mahou</td><td>53%</td><td>61%</td><td>60%</td><td>56%</td><td>0%</td></tr>
+   <tr><td class="tprompt">San Miguel</td><td>40%</td><td>48%</td><td>47%</td><td>35%</td><td>0%</td></tr>
+   <tr><td class="tprompt">Alhambra</td><td>23%</td><td>30%</td><td>24%</td><td>27%</td><td>0%</td></tr>
+   <tr><td class="tprompt">Solán de Cabras</td><td>58%</td><td>57%</td><td>58%</td><td>—</td><td>0%</td></tr>
+  </tbody></table>
+  <div class="src">SoV = cuota de menciones de marca en su set de keywords trackeadas (Ahrefs Brand Radar, serie diaria abr–nov 2025). Estrella Galicia supera en menciones a cada marca MSM en su propio set (54.293 vs 51.416 en AIO). Citas propias = 0 en los 4 dominios y en todos los motores.</div>
 </div>
 <div class="card" style="margin-top:16px">
   <h3>Lectura estratégica</h3>
