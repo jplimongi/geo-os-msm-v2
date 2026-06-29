@@ -353,7 +353,6 @@ h1,h2,h3,h4,.sec-title,.k-val,.kv,.brand h1{font-family:var(--head);letter-spaci
       </div>
       <div class="t-right">
         <span class="pill"><span class="dot"></span> Monitorización activa · 6 motores</span>
-        <button onclick="openDemoScript()" title="Guion de demo de 7 minutos" style="background:var(--msm-red);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer">▶ Guion demo</button>
         <span class="badge b-gray" id="roleChip" style="cursor:default">—</span>
         <button id="logoutBtn" title="Salir" style="background:transparent;border:1px solid var(--line);color:var(--muted);padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer">Salir</button>
       </div>
@@ -373,7 +372,7 @@ window.GEO_DAILY = {
     {ic:"⚠",bg:"#FBE7EA",c:"#D7263D",t:"Estrella Galicia lidera 'mejores cervezas' en los 6 motores",d:"Los 6 motores ponen Estrella Galicia/1906 por delante; Mahou = 'la más vendida, no la mejor'",time:"29-jun 09:30"},
     {ic:"★",bg:"#EAF6EF",c:"#1E9E6A",t:"Alhambra Reserva 1925 y Mahou Sin Filtrar entran en los rankings",d:"Mejora de presencia vs 25-jun: ChatGPT cita Alhambra 1925 (#4) y Mahou Sin Filtrar (#6); el AIO cita Alhambra 1925 y Mahou 5 Estrellas",time:"29-jun 09:30"},
     {ic:"⚠",bg:"#FBE7EA",c:"#D7263D",t:"'Sin alcohol': Estrella Galicia 0,0 gana en los 6 motores (OCU)",d:"San Miguel 0,0 y Mahou 0,0 quedan como alternativas; ChatGPT avisa de que Alhambra Sin es 0,8% (no 0,0)",time:"29-jun 09:30"},
-    {ic:"◎",bg:"#E8F0FE",c:"#2D6CDF",t:"Google AI Overview se activa en ambas consultas",d:"Con búsqueda humana (no URL directa) el AIO aparece y cita marcas MSM desde Reddit/Supercash/El País",time:"29-jun 09:30"}
+    {ic:"◎",bg:"#E8F0FE",c:"#2D6CDF",t:"Google AI Overview se activa en ambas consultas",d:"Con búsqueda manual (no URL directa) el AIO aparece y cita marcas MSM desde Reddit/Supercash/El País",time:"29-jun 09:30"}
   ]
 };
 
@@ -494,7 +493,7 @@ const KPIS=[
 
 /* ============ ESTADO INTERACTIVO (persistente) ============ */
 const SKEY="msm_geo_state_v2";
-const STATE=Object.assign({findings:[],recs:[],addedPrompts:[],riskOverride:{},feedExtra:[],kpi:{visibility:75,narrative:38,citation:0,risk:69,gap:100},runs:0},
+const STATE=Object.assign({findings:[],recs:[],addedPrompts:[],riskOverride:{},feedExtra:[],manualObjs:[],kpi:{visibility:75,narrative:38,citation:0,risk:69,gap:100},runs:0},
   (()=>{try{return JSON.parse(localStorage.getItem(SKEY))||{}}catch(e){return {}}})());
 function persist(){try{localStorage.setItem(SKEY,JSON.stringify(STATE))}catch(e){}}
 STATE.kpi={visibility:75,narrative:38,citation:0,risk:69,gap:100}; /* KPIs siempre desde el baseline real en cada apertura */
@@ -588,7 +587,7 @@ function twinPanelsHTML(qi){
        <div class="erow ebrands"><b>Marcas citadas:</b><br>${p.brands.map(b=>{const own=b.endsWith("*");const n=own?b.slice(0,-1):b;return `<span class="${own?'msm':''}">${n}${own?' ◆':''}</span>`;}).join("")}</div>
        <div class="erow"><b>Citación propia MSM:</b> <span style="color:${p.cit<5?'var(--redflag)':p.cit<15?'#9a7400':'var(--green)'};font-weight:800">${p.cit}%</span></div>
        <div class="erow" style="display:flex;gap:6px;margin-top:6px"><span class="badge ${alignBadge(p.align)}">alineamiento ${p.align}</span><span class="badge ${riskBadge(p.risk)}">riesgo ${p.risk}</span></div>`
-    : `<div class="erelato" style="display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-style:italic">Pendiente de captura real · requiere sesión autenticada (humano en el loop)</div>
+    : `<div class="erelato" style="display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-style:italic">Pendiente de captura real · requiere sesión autenticada (captura del operador)</div>
        <div class="erow"><span class="badge b-gray">sin dato capturado</span> <span class="mini">ábrelo en vivo →</span></div>`;
    return `<div class="eng">
      <div class="ehead">
@@ -619,7 +618,7 @@ const LOOP_STEPS=[
  ["1","Detecta","El Centinela barre los 6 motores y marca la anomalía."],
  ["2","Diagnostica","'MSM = la más consumida, no la más recomendada'. Citación propia 0% en Perplexity."],
  ["3","Propone","Editor GEO propone reforzar 'Alhambra / calidad' con contenido citable + dato propio."],
- ["4","Aprueba","El Squad GEO valida la narrativa con el COEJ (humano en el ciclo)."],
+ ["4","Aprueba","El Squad GEO valida la narrativa con el COEJ."],
  ["5","Ejecuta vía MCP","Publica FAQ AI-ready + actualiza entidad. En demo: guionizado. En producción: real vía MCP."],
  ["6","Re-mide","El Centinela re-consulta y el marcador se mueve solo."]
 ];
@@ -640,7 +639,7 @@ function initLoop(){
     const S=steps(); let i=0;
     const adv=()=>{
       if(i>0)S[i-1].classList.remove("on"),S[i-1].classList.add("done");
-      if(i<S.length){S[i].classList.add("on"); i++; setTimeout(adv,650);}
+      if(i<S.length){S[i].classList.add("on"); i++; setTimeout(adv,3000);}
       else{
         // re-mide: el marcador sube
         const before={c:STATE.kpi.citation,n:STATE.kpi.narrative,v:STATE.kpi.visibility};
@@ -695,13 +694,22 @@ competidores:()=>`
 /* -------- ACTION QUEUE -------- */
 actionqueue:()=>{
   const seed=[
+   ["Crear contenido citable answer-first 'mejores cervezas españolas' + dato propio","Marcas","Pendiente","Alta"],
+   ["Clarificar el claim 0,0 de Alhambra Sin (0,8% no es 0,0)","No-Alcohol","Pendiente","Alta"],
    ["Publicar Landing/FAQ 0,0 (alcohol, calorías, azúcar, moderación)","No-Alcohol","Pendiente","Alta"],
    ["Corregir origen de Solán en Wikidata + fichas","Hidratación / Solán","Pendiente","Alta"],
-   ["Aflorar autoría del grupo (La Virgen, Victoria, Alhambra)","Marcas","En revisión","Alta"],
+   ["Desplegar kit de entidad MSM (JSON-LD + Wikidata + sameAs)","Corporativo","Pendiente","Alta"],
+   ["Aclarar la entidad Alhambra (marca, no monumento)","Marcas","Pendiente","Media"],
+   ["Crear entidad y contenido citable de Newdrinks","Diversificación","Pendiente","Media"],
+   ["Desbloquear corpus ESG / notas de prensa en robots.txt","Corporativo","Pendiente","Media"],
+   ["Entidad EN + aflorar Founders en respuestas internacionales","Internacional","Pendiente","Media"],
+   ["Piloto de reseñas AI-ready + GBP en 3 ciudades","Hostelería","Pendiente","Media"],
+   ["Activar briefing PR para territorio 0,0 / salud","No-Alcohol","Pendiente","Media"],
+   ["Aflorar autoría del grupo (La Virgen, Victoria, Alhambra, Founders)","Marcas","En revisión","Alta"],
    ["Validar claim de moderación con Comunicación","No-Alcohol","En revisión","Media"],
-   ["Optimizar GBP de 3 bares prioritarios","Hostelería","En curso","Media"],
-   ["Crear FAQ corporativa AI-ready (entidad MSM)","Corporativo","Pendiente","Media"],
-   ["Activar briefing PR para territorio 0,0 / salud","No-Alcohol","Pendiente","Media"]
+   ["Lanzar benchmark competitivo cuantitativo (Ahrefs Brand Radar)","Marcas","En revisión","Media"],
+   ["Reforzar citación propia en consideración (Marcas)","Marcas","En curso","Alta"],
+   ["Optimizar GBP de 3 bares prioritarios","Hostelería","En curso","Media"]
   ];
   const extra=(STATE.feedExtra||[]).filter(x=>x.t&&x.t.indexOf('Acción lanzada')===0).map(x=>[x.t.replace('Acción lanzada · ',''),(x.d||'').split(' · ')[0],"Pendiente","Alta"]);
   const all=extra.concat(seed); const cols=["Pendiente","En revisión","En curso"];
@@ -742,7 +750,7 @@ ${LOOP_STEPS.map(s=>`<div class="lstep"><div class="ln">${s[0]}</div><h4>${s[1]}
 </div>
 <div class="card" style="margin-top:16px">
   <h3>Marcador en vivo <span class="badge b-blue">se mueve al ejecutar</span></h3>
-  <div class="hint">El humano aprueba; los agentes ejecutan vía MCP; el sistema vuelve a medir. Esto es lo que un dashboard histórico no hace.</div>
+  <div class="hint">El Squad GEO aprueba; los agentes ejecutan vía MCP; el sistema vuelve a medir. Esto es lo que un dashboard histórico no hace.</div>
   <div class="score" id="loopScore"></div>
   <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
     <button id="loopRun" style="background:var(--msm-red);color:#fff;border:none;padding:11px 20px;border-radius:10px;font-size:13.5px;font-weight:800;font-family:var(--head);letter-spacing:.4px;cursor:pointer">▶ Aprobar y ejecutar la corrección vía MCP</button>
@@ -839,9 +847,9 @@ ${KPIS.slice(0,4).map(k=>kpiCard(k)).join("")}
 ${KPIS.slice(4).map(k=>kpiCard(k)).join("")}
 <div class="card" style="background:linear-gradient(135deg,var(--msm-navy),var(--msm-navy-2));color:#fff;border:none">
   <h3 style="color:#fff">Salud global GEO</h3>
-  <div class="hint" style="color:#9FB2CC">Índice compuesto ponderado</div>
-  <div style="font-size:42px;font-weight:800;margin-top:6px">—</div>
-  <div style="font-size:12px;color:#cdd8e8;margin-top:4px">Se calcula al consolidar el set completo · 1ª medición 25-jun · última 29-jun</div>
+  <div class="hint" style="color:#9FB2CC">Índice compuesto · 5 KPIs medidos</div>
+  <div style="font-size:42px;font-weight:800;margin-top:6px">${Math.round((STATE.kpi.visibility+STATE.kpi.narrative+STATE.kpi.citation+(100-STATE.kpi.risk)+(100-STATE.kpi.gap))/5)}<span style="font-size:20px;color:#9FB2CC">/100</span></div>
+  <div style="font-size:12px;color:#cdd8e8;margin-top:4px">Media de Visibility, Narrative, Citation, (100−Risk) y (100−Content Gap) · 29-jun. Sube al cerrar ciclos.</div>
 </div>
 </div>
 
@@ -858,9 +866,17 @@ ${KPIS.slice(4).map(k=>kpiCard(k)).join("")}
          ["Corporativo","Entidad rica + citas propias (Solán/Founders)","Factual Accuracy","Activo"],
          ["Diversificación NoLow","Liderar 'sin alcohol' en la respuesta IA","AI Visibility","Oportunidad"],
          ["Internacional","Aflorar Founders + marca España (EN)","Vis. EN","Desarrollo"]
-        ].map(o=>`<tr><td class="tprompt">${o[0]}</td><td class="mini">${o[1]}</td><td><span class="tag">${o[2]}</span></td><td><span class="badge ${o[3]=='Activo'?'b-green':o[3]=='Oportunidad'?'b-red':'b-amber'}">${o[3]}</span></td></tr>`).join("")}
+        ].map(o=>`<tr><td class="tprompt">${o[0]}</td><td class="mini">${o[1]}</td><td><span class="tag">${o[2]}</span></td><td><span class="badge ${o[3]=='Activo'?'b-green':o[3]=='Oportunidad'?'b-red':'b-amber'}">${o[3]}</span></td></tr>`).join("")}${STATE.manualObjs.map(o=>`<tr style="background:#FFF6F2"><td class="tprompt">${o.dom} <span class="badge b-red" style="font-size:9px">manual</span></td><td class="mini">${o.obj}</td><td><span class="tag">${o.kpi}</span></td><td><span class="badge b-amber">${o.estado}</span></td></tr>`).join("")}
       </tbody>
     </table>
+    <div style="margin-top:12px;border-top:1px dashed var(--line);padding-top:12px">
+      <div class="hint" style="margin-bottom:6px"><b>Fijar objetivo manual</b> → baja al dominio y se ejecuta como los validados (cola del Squad)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="objText" type="text" placeholder="Ej.: Aflorar autoría de La Virgen en 'mejores cervezas'" style="flex:1;min-width:240px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px">
+        <select id="objDom" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px">${VERTICALS.filter(v=>!v.parent).map(v=>`<option>${v.dom}</option>`).join("")}</select>
+        <button onclick="fijarObjetivo()" style="background:var(--msm-red);color:#fff;border:none;padding:9px 15px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">▶ Fijar y bajar al dominio</button>
+      </div>
+    </div>
   </div>
   <div class="card">
     <h3>Lo relevante que sube ↑ <span class="badge b-gray">de los dominios</span></h3>
@@ -1100,11 +1116,11 @@ ${[["⌕","Agente de Tracking de Prompts","Corre el set fijo de prompts en los 6
   <div class="card"><h3>Arquitectura de automatización (MCP)</h3><div class="hint">Cómo se integra en el día a día del equipo</div>
   <div class="flow" style="flex-direction:column">
     <div class="step"><div class="n">●</div><h4>Capa de captura</h4><p>Conectores/MCP a motores de IA, Search Console, GBP, prensa y fuentes. Normalización de datos.</p></div>
-    <div class="step"><div class="n">●</div><h4>Capa de agentes</h4><p>Agentes GEO orquestados (insights, gaps, riesgo, recomendación) con verificación humana en el loop.</p></div>
+    <div class="step"><div class="n">●</div><h4>Capa de agentes</h4><p>Agentes GEO orquestados (insights, gaps, riesgo, recomendación) con verificación del Squad GEO.</p></div>
     <div class="step"><div class="n">●</div><h4>Capa de acción</h4><p>Recomendaciones priorizadas → ClickUp/flujo del Squad → ejecución sobre fuentes.</p></div>
     <div class="step"><div class="n">●</div><h4>Capa de reporting</h4><p>Dashboard + informe ejecutivo/operativo automatizado. Bajo en carga, no dependiente de reuniones.</p></div>
   </div></div>
-  <div class="note" style="margin-top:14px"><b>Principio (brief 3.2):</b> modelo eficiente, bajo en carga operativa, no dependiente de múltiples reuniones, basado en datos y ciclos de aprendizaje. La IA acelera; el humano valida intención, autoridad y cualquier corrección que afecte al relato.</div>
+  <div class="note" style="margin-top:14px"><b>Principio (brief 3.2):</b> modelo eficiente, bajo en carga operativa, no dependiente de múltiples reuniones, basado en datos y ciclos de aprendizaje. La IA acelera; el Squad GEO valida intención, autoridad y cualquier corrección que afecte al relato.</div>
 </div>
 </div>
 
@@ -1118,7 +1134,7 @@ ${[["⌕","Agente de Tracking de Prompts","Corre el set fijo de prompts en los 6
   <tr><td class="tprompt">mcp-sources-crawler</td><td class="mini">Wikidata, prensa, Reddit, foros, YouTube (fuentes citables)</td><td><span class="badge b-blue">semanal</span></td></tr>
   <tr><td class="tprompt">mcp-clickup</td><td class="mini">Crea/mueve tareas de acción del Squad y dominios</td><td><span class="badge b-gray">evento</span></td></tr>
   </tbody></table>
-  <div class="src">Verificación humana en el loop antes de cualquier corrección que afecte al relato (estándar de ejecución IA).</div>
+  <div class="src">Verificación del Squad GEO antes de cualquier corrección que afecte al relato (estándar de ejecución IA).</div>
   </div>
   <div class="card"><h3>Modelo de datos (brief 3.5 · estructura/normalización/histórico)</h3><div class="hint">Esquema de entidades del data layer</div>
   <table><thead><tr><th>Entidad</th><th>Campos clave</th></tr></thead><tbody>
@@ -1532,6 +1548,16 @@ function lanzarAccion(label,dom,tipo){
   STATE.feedExtra.unshift({ic:t?'⚠':'▶',bg:t?'#FBE7EA':'#FCE8EA',c:'#DC0019',t:(t?'Riesgo abierto · ':'Acción lanzada · ')+label,d:(dom||'')+(t?' · escalado al Squad':' · enviada a la cola del Squad'),time:'ahora '+nowTime()});
   bumpKPI(t?{risk:+3}:{gap:-1}); persist(); toast((t?'Riesgo abierto · ':'Acción enviada · ')+label);
 }
+function fijarObjetivo(){
+  const el=document.getElementById('objText'), sel=document.getElementById('objDom');
+  const txt=el?el.value.trim():''; const dom=sel?sel.value:'';
+  if(!txt){toast('Escribe el objetivo primero'); return;}
+  if(!STATE.manualObjs)STATE.manualObjs=[];
+  STATE.manualObjs.unshift({dom:dom,obj:txt,kpi:'Manual',estado:'Enviado'});
+  persist();
+  lanzarAccion(txt,dom);
+  go('cockpit');
+}
 let curVert=0;
 var curVertTab="narr";
 function renderVertical(i){
@@ -1580,8 +1606,8 @@ function renderVertical(i){
   const tabs={
     narr:`<div class="note" style="border-style:solid"><b>Narrativa objetivo:</b> ${v.narr}</div><div style="margin-top:12px;font-size:12.5px"><b>Claims aprobados:</b><br>${v.claims.map(c=>'▸ '+c).join("<br>")}</div><button onclick="lanzarAccion('Reforzar narrativa del dominio','${v.dom}')" style="margin-top:12px;background:var(--msm-red);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">&#9654; Reforzar narrativa</button>`,
     src:`<div class="hint">Fuentes a activar para que los LLM citen a MSM en este dominio</div>${v.fuentes.map(f=>`<div style="font-size:12.5px;margin:5px 0">▸ ${f}</div>`).join("")}<button onclick="lanzarAccion('Activar fuentes del dominio','${v.dom}')" style="margin-top:10px;background:var(--msm-red);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">&#9654; Activar fuentes</button>`,
-    risk:`<div class="note" style="border-style:solid">Vigilancia del dominio: el Guardián compara el relato objetivo con la respuesta de la IA y puntúa severidad×probabilidad. Cualquier corrección que afecte al relato pasa por aprobación humana.</div><button onclick="lanzarAccion('Vigilancia reputacional del dominio','${v.dom}','riesgo')" style="margin-top:12px;background:#fff;color:var(--msm-navy);border:1px solid var(--line);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">&#9888; Abrir riesgo del dominio</button>`,
-    twin: twinQ>=0 ? `<div class="hint">Pregunta clave del dominio en los 6 motores · <b>${TWIN_QUERIES[twinQ].q}</b></div><div class="twin-grid" style="margin-top:10px">${twinPanelsHTML(twinQ)}</div>` : `<div class="note" style="border-style:solid">GEO Twin de este dominio: <b>pendiente de captura real</b>. Se activa al correr el set del dominio en los 6 motores (humano en el loop para Gemini/Grok/Claude).</div>`
+    risk:`<div class="note" style="border-style:solid">Vigilancia del dominio: el Guardián compara el relato objetivo con la respuesta de la IA y puntúa severidad×probabilidad. Cualquier corrección que afecte al relato pasa por aprobación del Squad GEO.</div><button onclick="lanzarAccion('Vigilancia reputacional del dominio','${v.dom}','riesgo')" style="margin-top:12px;background:#fff;color:var(--msm-navy);border:1px solid var(--line);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">&#9888; Abrir riesgo del dominio</button>`,
+    twin: twinQ>=0 ? `<div class="hint">Pregunta clave del dominio en los 6 motores · <b>${TWIN_QUERIES[twinQ].q}</b></div><div class="twin-grid" style="margin-top:10px">${twinPanelsHTML(twinQ)}</div>` : `<div class="note" style="border-style:solid">GEO Twin de este dominio: <b>pendiente de captura real</b>. Se activa al correr el set del dominio en los 6 motores (captura asistida por el operador donde el motor pide login).</div>`
   };
   function paintTab(){const el=document.getElementById("vertTabBody");if(el)el.innerHTML=tabs[curVertTab]||tabs.narr;}
   paintTab();
@@ -1643,7 +1669,7 @@ document.querySelectorAll("#nav a").forEach(a=>a.onclick=()=>go(a.dataset.v));
 /* ===== LOGIN + ROLE-GATING ===== */
 const ROLES={
   admin:{label:"Administrador · rT·Cupperlab", views:null, badge:"b-red"},
-  squad:{label:"Squad GEO · MSM central", views:["cockpit","loop","twin","verticals","visibility","prompts","narrative","sources","risk","competidores","actionqueue","governance","formacion","report"], badge:"b-blue"},
+  squad:{label:"Squad GEO", views:["cockpit","loop","twin","verticals","visibility","prompts","narrative","sources","risk","competidores","actionqueue","governance","formacion","report"], badge:"b-blue"},
   marcas:{label:"Operador · Marcas", views:["verticals","twin","loop","narrative","sources","risk","actionqueue","formacion"], domain:"Marcas", badge:"b-amber"},
   hosteleria:{label:"Operador · Hostelería", views:["verticals","twin","loop","narrative","sources","risk","actionqueue","formacion"], domain:"Hostelería", badge:"b-amber"}
 };
@@ -1707,7 +1733,7 @@ document.getElementById("logoutBtn").onclick=()=>{
   const ab=document.createElement("button");ab.id="asisBtn";ab.innerHTML="💬 Asistente GEO";ab.style.display="none";document.body.appendChild(ab);
   const ap=document.createElement("div");ap.id="asisPanel";
   const QA=[
-   ["¿Qué es el Ciclo GEO?","Es la espina del sistema: Detecta → Diagnostica → Propone → un humano Aprueba → Ejecuta vía MCP → Re-mide. No solo enseña datos: actúa y vuelve a medir. Es lo único que un dashboard histórico no hace."],
+   ["¿Qué es el Ciclo GEO?","Es la espina del sistema: Detecta → Diagnostica → Propone → el Squad GEO Aprueba → Ejecuta vía MCP → Re-mide. No solo enseña datos: actúa y vuelve a medir. Es lo único que un dashboard histórico no hace."],
    ["¿Por qué 6 motores?","Una sola IA da una foto engañosa. Para 'mejores cervezas españolas' MSM pasa de invisible en Perplexity a bien representada en ChatGPT. Por eso medimos ChatGPT, Perplexity, Gemini, Claude, Grok y Google AIO, y triangulamos."],
    ["¿Esto garantiza ranking?","No. El LLMO no tiene un estándar de medición consolidado. Comprometemos dirección y método contra un baseline propio fechado, no una posición garantizada. Lo decimos abierto."],
    ["¿Qué es el GEO Twin?","El simulador: lanza una pregunta de consumidor a los 6 motores a la vez y te deja abrir la consulta real en cada uno para reproducir el dato tú mismo."],
@@ -1733,7 +1759,7 @@ function openHowto(){
    ["1","Detecta","El Centinela barre los 6 motores cada día y marca la anomalía (caída de visibilidad, error factual, cita perdida)."],
    ["2","Diagnostica","Clasifica el momento de decisión y el dominio, y mide citación propia y alineamiento narrativo contra el baseline."],
    ["3","Propone","El Editor GEO propone la acción priorizada por impacto: contenido AI-ready, corrección de entidad, FAQ con dato propio."],
-   ["4","Aprueba","El humano (Squad GEO + COEJ) valida la narrativa. Nada que afecte al relato se publica sin aprobación."],
+   ["4","Aprueba","El Squad GEO (con el COEJ) valida la narrativa. Nada que afecte al relato se publica sin aprobación."],
    ["5","Ejecuta vía MCP","Los agentes publican y actualizan las fuentes a través de la capa MCP. En la demo va guionizado; en producción es real."],
    ["6","Re-mide","El Centinela re-consulta los motores y el marcador se mueve. Se cierra el ciclo y se sella con fecha."]
   ];
