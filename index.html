@@ -339,8 +339,10 @@ h1,h2,h3,h4,.sec-title,.k-val,.kv,.brand h1{font-family:var(--head);letter-spaci
       <a data-v="report"><span class="ic">▤</span> Reporting</a>
     </nav>
     <div class="foot">
-      Modelo híbrido · Centralizado + Dominios<br>
-      <b style="color:#333">Relevant Group</b> × <span class="cupper-logo" style="font-size:11px"><span class="c1">cupper</span><span class="c2">lab</span></span> · Partner tecnológico IA
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="logo-img logo-rt" style="width:42px;height:15px;display:inline-block;flex:0 0 auto"></span>
+        <span style="font-size:6px;color:var(--muted)">with <span class="cupper-logo" style="font-size:7px"><span class="c1">cupper</span><span class="c2">lab</span></span> technology</span>
+      </div>
     </div>
   </aside>
 
@@ -349,7 +351,7 @@ h1,h2,h3,h4,.sec-title,.k-val,.kv,.brand h1{font-family:var(--head);letter-spaci
     <div class="topbar">
       <div class="t-left">
         <h2 id="vtitle">Cockpit diario</h2>
-        <div class="crumb" id="vcrumb">Vista 360° del posicionamiento de Mahou San Miguel en motores de IA</div>
+        <div class="crumb" id="vcrumb">Mahou San Miguel en los motores de IA: de medir la presencia a controlar el relato</div>
       </div>
       <div class="t-right">
         <span class="pill"><span class="dot"></span> Monitorización activa · 6 motores</span>
@@ -486,9 +488,7 @@ const KPIS=[
   {key:"accuracy",label:"Factual Accuracy",val:"—",delta:"1 error real (Solán)",dir:"flat",hint:"Afirmaciones correctas / verificables ×100. Pendiente de anotar el set completo; 1 error detectado (origen de Solán).",color:"#1E9E6A"},
   {key:"risk",label:"Reputational Risk",val:"69",unit:"/100",delta:"Σ(sev×prob) · 5 riesgos",dir:"flat",hint:"Riesgo agregado (mayor = peor): Σ(severidad×probabilidad) de riesgos reales abiertos, escala 1-3, normalizado 0-100.",color:"#DC0019"},
   {key:"gap",label:"Content Gap",val:"100",unit:"/100",delta:"muestra n=4",dir:"flat",hint:"% de prompts del set donde MSM no aparece o no cita fuente propia. Alto al arranque (citación 0%).",color:"#8C8C8C"},
-  {key:"fix",label:"Tiempo de corrección",val:"—",delta:"objetivo <48h",dir:"flat",hint:"Objetivo del programa; se mide al cerrar el primer ciclo real (aún sin ciclos).",color:"#333333"},
-  {key:"domauth",label:"Domain Authority",val:"—",unit:"/100",delta:"Ahrefs · por dominio",dir:"flat",hint:"Autoridad de dominio (DR) por marca MSM. Pendiente de volcar Ahrefs.",color:"#333333"},
-  {key:"linktrust",label:"Link Trust",val:"—",delta:"perfil de enlaces",dir:"flat",hint:"Salud del perfil de enlaces hacia el site (dofollow, DR, refdomains). Pendiente.",color:"#333333"}
+  {key:"fix",label:"Tiempo de corrección",val:"—",delta:"objetivo <48h",dir:"flat",hint:"Objetivo del programa; se mide al cerrar el primer ciclo real (aún sin ciclos).",color:"#333333"}
 ];
 
 /* ============ ESTADO INTERACTIVO (persistente) ============ */
@@ -609,7 +609,6 @@ function initTwin(){
   document.getElementById("twinChips").innerHTML=TWIN_QUERIES.map((Q,i)=>`<div class="chip ${i==curTwinQ?'on':''}" data-i="${i}">${Q.q}</div>`).join("");
   document.querySelectorAll("#twinChips .chip").forEach(c=>c.onclick=()=>{curTwinQ=+c.dataset.i;initTwin();});
   document.getElementById("twinBody").innerHTML=twinPanelsHTML(curTwinQ);
-  document.getElementById("twinNote").textContent=TWIN_QUERIES[curTwinQ].note;
   const sb=document.getElementById("shareSixBtn"); if(sb)sb.onclick=()=>shareSix(curTwinQ);
 }
 
@@ -726,16 +725,11 @@ actionqueue:()=>{
 /* -------- GEO TWIN -------- */
 twin:()=>`
 <div class="sec-title"><span class="bar"></span>GEO Twin · una pregunta de consumidor en 6 motores a la vez</div>
-<div class="hint" style="margin-bottom:10px">No consolidamos datos: comparamos lo que <b>cada IA responde</b> y lo reproducimos en vivo. Elige la consulta; abre la consulta real en cada motor.</div>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-  <span class="incog" title="La IA responde sin memoria del usuario">◑ Modo objetivo · incógnito</span>
   <button id="shareSixBtn" style="background:var(--msm-navy);color:#fff;border:none;padding:8px 15px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer">⧉ Compartir los 6 enlaces</button>
-  <span class="mini" style="max-width:520px">Para una foto sin sesgo, GEO-OS se abre en ventana de incógnito y las consultas heredan esa sesión (el navegador no puede forzar incógnito desde el enlace).</span>
 </div>
 <div class="chips" id="twinChips"></div>
-<div class="note" id="twinNote" style="border-style:solid;margin:4px 0 14px"></div>
 <div class="twin-grid" id="twinBody"></div>
-<div class="note" style="margin-top:16px"><b>Honestidad:</b> los relatos son capturas reales fechadas (triangulables en ≥2 motores). El botón "Abrir consulta real" lleva el prompt exacto a cada motor para que lo reproduzcas tú mismo. No se finge IA en vivo dentro del panel.</div>
 `,
 /* -------- CICLO GEO -------- */
 loop:()=>`
@@ -764,7 +758,7 @@ ${LOOP_STEPS.map(s=>`<div class="lstep"><div class="ln">${s[0]}</div><h4>${s[1]}
 formacion:()=>`
 <div class="sec-title"><span class="bar"></span>Formación del equipo GEO (brief 3.11) · onboarding por rol</div>
 <div class="grid g3">
-  ${[["Administrador (rT·Cupperlab)","Opera el software: agentes, capa MCP, conectores y configuración. Garantiza disponibilidad y seguridad.","Ruta: Arquitectura GEO-OS · MCP · Seguridad y RGPD"],
+  ${[["Administrador plataforma","Opera el software: agentes, capa MCP, conectores y configuración. Garantiza disponibilidad y seguridad.","Ruta: Arquitectura GEO-OS · MCP · Seguridad y RGPD"],
      ["Squad GEO (MSM central)","Fija objetivos, aprueba narrativas con el COEJ, lee la Torre y coordina dominios.","Ruta: Estrategia GEO · Lectura de KPIs · Gobierno y aprobación"],
      ["Operador de dominio","Revisa su Tablero, ejecuta acciones AI-ready y escala riesgos a su nivel.","Ruta: Tu dominio · GEO Twin · Ciclo Detecta→Re-mide"]
     ].map(r=>`<div class="card"><h3>${r[0]}</h3><div class="hint">${r[1]}</div><div class="note" style="border-style:solid"><b>${r[2]}</b></div></div>`).join("")}
@@ -846,10 +840,9 @@ ${KPIS.slice(0,4).map(k=>kpiCard(k)).join("")}
 <div class="grid g4" style="margin-top:16px">
 ${KPIS.slice(4).map(k=>kpiCard(k)).join("")}
 <div class="card" style="background:linear-gradient(135deg,var(--msm-navy),var(--msm-navy-2));color:#fff;border:none">
-  <h3 style="color:#fff">Salud global GEO</h3>
+  <h3 style="color:#fff">Salud global GEO <span class="qtip" data-tip="Índice compuesto de salud GEO (0-100, mayor = mejor): media de AI Visibility, Narrative Alignment, AI Citation, (100−Reputational Risk) y (100−Content Gap). Sube al cerrar ciclos en el Ciclo GEO. Medición 29-jun.">?</span></h3>
   <div class="hint" style="color:#9FB2CC">Índice compuesto · 5 KPIs medidos</div>
   <div style="font-size:42px;font-weight:800;margin-top:6px">${Math.round((STATE.kpi.visibility+STATE.kpi.narrative+STATE.kpi.citation+(100-STATE.kpi.risk)+(100-STATE.kpi.gap))/5)}<span style="font-size:20px;color:#9FB2CC">/100</span></div>
-  <div style="font-size:12px;color:#cdd8e8;margin-top:4px">Media de Visibility, Narrative, Citation, (100−Risk) y (100−Content Gap) · 29-jun. Sube al cerrar ciclos.</div>
 </div>
 </div>
 
@@ -1421,7 +1414,7 @@ function renderPrompts(){
 }
 
 /* ============ ROUTER ============ */
-const TITLES={cockpit:["Torre de Control","Visión única del Squad GEO · posicionamiento de Mahou San Miguel en los motores de IA"],
+const TITLES={cockpit:["Torre de Control","Visión única del Squad GEO · Mahou San Miguel en los motores de IA: de medir la presencia a controlar el relato"],
 formacion:["Formación","Onboarding por rol, microcursos y certificación del equipo GEO"],
 loop:["Ciclo GEO","Detecta → Diagnostica → Propone → Aprueba → Ejecuta vía MCP → Re-mide · el ciclo cerrado de Marcas"],
 twin:["GEO Twin","Una pregunta de consumidor en ChatGPT, Perplexity, Gemini, Claude, Grok y Google AIO a la vez"],
