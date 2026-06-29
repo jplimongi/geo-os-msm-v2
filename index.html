@@ -1581,6 +1581,7 @@ function renderVertical(i){
       ${accBtns}
     </div>
   </div>
+  ${(STATE.manualObjs||[]).filter(o=>o.dom===v.dom||o.dom===(v.parent||'')).length?`<div class="card" style="margin-top:16px;border-left:4px solid var(--msm-red)"><h3>Objetivos recibidos de la Torre <span class="badge b-red">para ${v.dom}</span></h3><div class="hint">Fijados por el Squad GEO en la Torre de Control · ejecútalos desde tu dominio</div>${(STATE.manualObjs||[]).filter(o=>o.dom===v.dom||o.dom===(v.parent||'')).map(o=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-top:8px"><div style="font-size:12.5px;font-weight:600">${o.obj}</div><button onclick="lanzarAccion('${o.obj.replace(/['"]/g,'')}','${v.dom}')" style="background:var(--msm-red);color:#fff;border:none;padding:7px 13px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">&#9654; Implementar</button></div>`).join("")}</div>`:''}
   <div class="grid g4" style="margin-top:16px">
     <div class="kbox"><div class="kt">Visibilidad (baseline)</div><div class="kv" style="color:${visColor}">${v.vis}%</div><div class="mini">direccional · se recalcula con el método validado</div></div>
     <div class="kbox"><div class="kt">KPI foco</div><div class="kv" style="font-size:14px">${v.kpi}</div></div>
